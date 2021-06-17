@@ -1,8 +1,8 @@
 package operationsvc
 
 import (
-	"github.com/mercadolibre/authorizer-api/resources/src/api/application/service/accountsvc"
-	"github.com/mercadolibre/authorizer-api/resources/src/api/application/service/transactionsvc"
+	"github.com/mercadolibre/authorizer-api/src/api/application/service/accountsvc"
+	"github.com/mercadolibre/authorizer-api/src/api/application/service/transactionsvc"
 )
 
 var (

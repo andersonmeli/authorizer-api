@@ -3,37 +3,40 @@ package operationsvc
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/mercadolibre/authorizer-api/resources/src/api/application/presentation/accountdto"
-	"github.com/mercadolibre/authorizer-api/resources/src/api/application/service/accountsvc"
-	"github.com/mercadolibre/authorizer-api/resources/src/api/application/service/transactionsvc"
+	"github.com/mercadolibre/authorizer-api/src/api/application/presentation/accountdto"
+	"github.com/mercadolibre/authorizer-api/src/api/application/service/accountsvc"
+	"github.com/mercadolibre/authorizer-api/src/api/application/service/transactionsvc"
 	"log"
 )
 
 type serviceImpl struct {
-	accountService            accountsvc.Service
-	transactionService        transactionsvc.Service
+	accountService     accountsvc.Service
+	transactionService transactionsvc.Service
 }
 
 func (service serviceImpl) ProcessOperations(messages []string) {
 	for _, message := range messages {
-		fmt.Println(message)
 		var result map[string]map[string]interface{}
 		json.Unmarshal([]byte(message), &result)
-		fmt.Println(result)
 
 		for k := range result {
 			if k == "account" {
-				fmt.Println(k)
-				account := accountdto.AccountRequest{
+				accountRequest := accountdto.AccountRequest{
 					ActiveCard:     result["account"]["active-card"].(bool),
 					AvailableLimit: result["account"]["available-limit"].(float64),
 				}
-				fmt.Println(account)
-				buf, err := json.Marshal(account)
+
+				account := service.accountService.CreateAccount(accountRequest)
+				response := accountdto.NewAccountResponse(account)
+
+				fmt.Println(response)
+				buf, err := json.Marshal(response)
 				if err != nil {
 					log.Fatal(err)
 				}
 				fmt.Printf("%s\n", buf)
+			}else if k == "transaction" {
+
 			}
 		}
 	}

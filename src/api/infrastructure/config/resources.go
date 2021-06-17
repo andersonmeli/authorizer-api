@@ -171,8 +171,8 @@ func AssetNames() []string {
 
 // _bindata is a table, holding each asset generator, mapped to its name.
 var _bindata = map[string]func() (*asset, error){
-	"../../../../resources/config/app.yaml":      ResourcesConfigAppYaml,
-	"../../../../resources/i18n/en.yaml":         ResourcesI18nEnYaml,
+	"../../../../resources/config/app.yaml": ResourcesConfigAppYaml,
+	"../../../../resources/i18n/en.yaml":    ResourcesI18nEnYaml,
 }
 
 // AssetDir returns the file names below a certain
