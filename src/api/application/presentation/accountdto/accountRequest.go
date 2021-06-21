@@ -1,7 +1,7 @@
 package accountdto
 
 import (
-	"github.com/mercadolibre/authorizer-api/src/api/domain/accountmd"
+	"github.com/authorizer-api/src/api/domain/accountmd"
 )
 
 type AccountRequest struct {

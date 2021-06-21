@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/mercadolibre/authorizer-api/src/api/infrastructure/server"
+	"github.com/authorizer-api/src/api/infrastructure/server"
 )
 
 func main() {

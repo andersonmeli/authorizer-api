@@ -2,7 +2,7 @@ package server
 
 import (
 	"bufio"
-	"github.com/mercadolibre/authorizer-api/src/api/application/controller"
+	"github.com/authorizer-api/src/api/application/controller"
 	"os"
 )
 

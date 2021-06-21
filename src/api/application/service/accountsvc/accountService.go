@@ -1,8 +1,8 @@
 package accountsvc
 
 import (
-	"github.com/mercadolibre/authorizer-api/src/api/application/presentation/accountdto"
-	"github.com/mercadolibre/authorizer-api/src/api/domain/accountmd"
+	"github.com/authorizer-api/src/api/application/presentation/accountdto"
+	"github.com/authorizer-api/src/api/domain/accountmd"
 )
 
 var (

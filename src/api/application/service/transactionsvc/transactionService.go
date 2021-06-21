@@ -1,6 +1,5 @@
 package transactionsvc
 
-
 var (
 	service Service
 )

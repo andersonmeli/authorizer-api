@@ -3,9 +3,9 @@ package operationsvc
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/mercadolibre/authorizer-api/src/api/application/presentation/accountdto"
-	"github.com/mercadolibre/authorizer-api/src/api/application/service/accountsvc"
-	"github.com/mercadolibre/authorizer-api/src/api/application/service/transactionsvc"
+	"github.com/authorizer-api/src/api/application/presentation/accountdto"
+	"github.com/authorizer-api/src/api/application/service/accountsvc"
+	"github.com/authorizer-api/src/api/application/service/transactionsvc"
 	"log"
 )
 

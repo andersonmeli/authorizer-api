@@ -1,7 +1,7 @@
 package operationdto
 
 import (
-	"github.com/mercadolibre/authorizer-api/src/api/domain/operationmd"
+	"github.com/authorizer-api/src/api/domain/operationmd"
 )
 
 type OperationRequest struct {

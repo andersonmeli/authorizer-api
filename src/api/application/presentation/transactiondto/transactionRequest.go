@@ -1,7 +1,7 @@
 package transactiondto
 
 import (
-	"github.com/mercadolibre/authorizer-api/src/api/domain/transactionmd"
+	"github.com/authorizer-api/src/api/domain/transactionmd"
 )
 
 type TransactionRequest struct {

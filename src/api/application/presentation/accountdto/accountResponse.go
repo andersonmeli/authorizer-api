@@ -1,6 +1,6 @@
 package accountdto
 
-import "github.com/mercadolibre/authorizer-api/src/api/domain/accountmd"
+import "github.com/authorizer-api/src/api/domain/accountmd"
 
 type AccountResponse struct {
 	ActiveCard 		bool     `json:"active-card" example:"true"`
