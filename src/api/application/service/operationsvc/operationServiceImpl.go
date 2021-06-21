@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/authorizer-api/src/api/application/presentation/accountdto"
+	"github.com/authorizer-api/src/api/application/presentation/operationdto"
+	"github.com/authorizer-api/src/api/application/presentation/transactiondto"
 	"github.com/authorizer-api/src/api/application/service/accountsvc"
 	"github.com/authorizer-api/src/api/application/service/transactionsvc"
 	"log"
@@ -34,21 +36,34 @@ func (service serviceImpl) ProcessOperations(messages []string) {
 
 				account := service.accountService.CreateAccount(accountRequest)
 
-				var response accountdto.AccountResponse
+				var accountResponse accountdto.AccountResponse
 				if len(service.accountService.GetAccounts()) > 1 {
-					response = accountdto.NewAccountResponse(service.accountService.GetAccounts()[0])
-					response.Violations = append(response.Violations, accountAlreadyInitialized)
+					accountResponse = accountdto.NewAccountResponse(service.accountService.GetAccounts()[0])
+					accountResponse.Violations = append(accountResponse.Violations, accountAlreadyInitialized)
 				}else{
-					response = accountdto.NewAccountResponse(account)
+					accountResponse = accountdto.NewAccountResponse(account)
 				}
 
-				buf, err := json.Marshal(response)
+				buf, err := json.Marshal(operationdto.NewOperationResponse(accountResponse))
 				if err != nil {
 					log.Fatal(err)
 				}
 				fmt.Printf("%s\n", buf)
 			}else if operationType == "transaction" {
+				transactionRequest := transactiondto.TransactionRequest{
+					Merchant: operations["transaction"]["merchant"].(string),
+					Amount:   operations["transaction"]["amount"].(float64),
+					Time:     operations["transaction"]["time"].(string),
+				}
 
+				transaction := service.transactionService.CreateTransaction(transactionRequest)
+				accountResponse := service.transactionService.AuthorizationTransaction(transaction)
+
+				buf, err := json.Marshal(operationdto.NewOperationResponse(accountResponse))
+				if err != nil {
+					log.Fatal(err)
+				}
+				fmt.Printf("%s\n", buf)
 			}
 		}
 	}

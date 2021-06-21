@@ -10,7 +10,7 @@ var (
 )
 
 type Service interface {
-	CreateAccount(accountRequest accountdto.AccountRequest) accountmd.Account
+	CreateAccount(request accountdto.AccountRequest) accountmd.Account
 	GetAccounts() []accountmd.Account
 }
 

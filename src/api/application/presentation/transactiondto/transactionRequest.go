@@ -6,7 +6,7 @@ import (
 
 type TransactionRequest struct {
 	Merchant string
-	Amount int
+	Amount float64
 	Time string
 }
 

@@ -16,8 +16,8 @@ func newServiceImpl() serviceImpl {
 	return serviceImpl{}
 }
 
-func (service serviceImpl) CreateAccount(accountRequest accountdto.AccountRequest) accountmd.Account {
-	accountInitialize := accountRequest.ToModel()
+func (service serviceImpl) CreateAccount(request accountdto.AccountRequest) accountmd.Account {
+	accountInitialize := request.ToModel()
 	accounts = append(accounts, accountInitialize)
 	return accountInitialize
 }

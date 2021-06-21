@@ -2,6 +2,6 @@ package transactionmd
 
 type Transaction struct {
 	Merchant string
-	Amount int
+	Amount float64
 	Time string
 }
