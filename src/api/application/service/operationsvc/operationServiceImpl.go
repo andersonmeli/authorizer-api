@@ -29,44 +29,51 @@ func (service serviceImpl) ProcessOperations(messages []string) {
 
 		for operationType := range operations {
 			if operationType == "account" {
-				accountRequest := accountdto.AccountRequest{
-					ActiveCard:     operations["account"]["active-card"].(bool),
-					AvailableLimit: operations["account"]["available-limit"].(float64),
-				}
-
-				account := service.accountService.CreateAccount(accountRequest)
-
-				var accountResponse accountdto.AccountResponse
-				if len(service.accountService.GetAccounts()) > 1 {
-					accountResponse = accountdto.NewAccountResponse(service.accountService.GetAccounts()[0])
-					accountResponse.Violations = append(accountResponse.Violations, accountAlreadyInitialized)
-				}else{
-					accountResponse = accountdto.NewAccountResponse(account)
-				}
-
-				buf, err := json.Marshal(operationdto.NewOperationResponse(accountResponse))
-				if err != nil {
-					log.Fatal(err)
-				}
-				fmt.Printf("%s\n", buf)
-			}else if operationType == "transaction" {
-				transactionRequest := transactiondto.TransactionRequest{
-					Merchant: operations["transaction"]["merchant"].(string),
-					Amount:   operations["transaction"]["amount"].(float64),
-					Time:     operations["transaction"]["time"].(string),
-				}
-
-				transaction := service.transactionService.CreateTransaction(transactionRequest)
-				accountResponse := service.transactionService.AuthorizationTransaction(transaction)
-
-				buf, err := json.Marshal(operationdto.NewOperationResponse(accountResponse))
-				if err != nil {
-					log.Fatal(err)
-				}
-				fmt.Printf("%s\n", buf)
+				createAccount(operations, service)
+			} else if operationType == "transaction" {
+				authorizationTransaction(operations, service)
 			}
 		}
 	}
+}
+
+func authorizationTransaction(operations map[string]map[string]interface{}, service serviceImpl) {
+	transactionRequest := transactiondto.TransactionRequest{
+		Merchant: operations["transaction"]["merchant"].(string),
+		Amount:   operations["transaction"]["amount"].(float64),
+		Time:     operations["transaction"]["time"].(string),
+	}
+
+	transaction := service.transactionService.CreateTransaction(transactionRequest)
+	accountResponse := service.transactionService.AuthorizationTransaction(transaction)
+	formatOperationResponse(accountResponse)
+}
+
+func createAccount(operations map[string]map[string]interface{}, service serviceImpl) {
+	accountRequest := accountdto.AccountRequest{
+		ActiveCard:     operations["account"]["active-card"].(bool),
+		AvailableLimit: operations["account"]["available-limit"].(float64),
+	}
+
+	account := service.accountService.CreateAccount(accountRequest)
+
+	var accountResponse accountdto.AccountResponse
+	if len(service.accountService.GetAccounts()) > 1 {
+		accountResponse = accountdto.NewAccountResponse(service.accountService.GetAccounts()[0])
+		accountResponse.Violations = append(accountResponse.Violations, accountAlreadyInitialized)
+	} else {
+		accountResponse = accountdto.NewAccountResponse(account)
+	}
+
+	formatOperationResponse(accountResponse)
+}
+
+func formatOperationResponse(accountResponse accountdto.AccountResponse) {
+	buf, err := json.Marshal(operationdto.NewOperationResponse(accountResponse))
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("%s\n", buf)
 }
 
 func newServiceImpl(accountService accountsvc.Service, transactionService transactionsvc.Service) serviceImpl {
