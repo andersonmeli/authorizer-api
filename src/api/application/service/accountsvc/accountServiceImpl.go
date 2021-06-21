@@ -7,6 +7,7 @@ import (
 
 var(
 	account accountmd.Account
+	accounts []accountmd.Account
 )
 type serviceImpl struct {
 }
@@ -16,5 +17,11 @@ func newServiceImpl() serviceImpl {
 }
 
 func (service serviceImpl) CreateAccount(accountRequest accountdto.AccountRequest) accountmd.Account {
-	return accountRequest.ToModel()
+	accountInitialize := accountRequest.ToModel()
+	accounts = append(accounts, accountInitialize)
+	return accountInitialize
+}
+
+func (service serviceImpl) GetAccounts() []accountmd.Account {
+	return accounts
 }

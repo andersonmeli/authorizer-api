@@ -9,6 +9,12 @@ import (
 	"log"
 )
 
+const (
+	accountAlreadyInitialized = "account-already-initialized"
+	highFrequencySmallInterval = "high-frequency-small-interval"
+	insufficientLimit = "insufficient-limit"
+)
+
 type serviceImpl struct {
 	accountService     accountsvc.Service
 	transactionService transactionsvc.Service
@@ -16,26 +22,32 @@ type serviceImpl struct {
 
 func (service serviceImpl) ProcessOperations(messages []string) {
 	for _, message := range messages {
-		var result map[string]map[string]interface{}
-		json.Unmarshal([]byte(message), &result)
+		var operations map[string]map[string]interface{}
+		json.Unmarshal([]byte(message), &operations)
 
-		for k := range result {
-			if k == "account" {
+		for operationType := range operations {
+			if operationType == "account" {
 				accountRequest := accountdto.AccountRequest{
-					ActiveCard:     result["account"]["active-card"].(bool),
-					AvailableLimit: result["account"]["available-limit"].(float64),
+					ActiveCard:     operations["account"]["active-card"].(bool),
+					AvailableLimit: operations["account"]["available-limit"].(float64),
 				}
 
 				account := service.accountService.CreateAccount(accountRequest)
-				response := accountdto.NewAccountResponse(account)
 
-				fmt.Println(response)
+				var response accountdto.AccountResponse
+				if len(service.accountService.GetAccounts()) > 1 {
+					response = accountdto.NewAccountResponse(service.accountService.GetAccounts()[0])
+					response.Violations = append(response.Violations, accountAlreadyInitialized)
+				}else{
+					response = accountdto.NewAccountResponse(account)
+				}
+
 				buf, err := json.Marshal(response)
 				if err != nil {
 					log.Fatal(err)
 				}
 				fmt.Printf("%s\n", buf)
-			}else if k == "transaction" {
+			}else if operationType == "transaction" {
 
 			}
 		}
