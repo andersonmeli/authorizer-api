@@ -15,6 +15,8 @@ const (
 
 func TestCreateTransaction(t *testing.T) {
 	service := newServiceImpl(accountsvc.Inject())
+	service.accountService.CleanAccounts()
+
 	transactionRequest := transactiondto.TransactionRequest{
 		Merchant: "Samsung",
 		Amount:   8000,
@@ -44,6 +46,7 @@ func TestCreateTransaction(t *testing.T) {
 
 func TestAuthorizationTransaction(t *testing.T){
 	service := newServiceImpl(accountsvc.Inject())
+	service.accountService.CleanAccounts()
 
 	accountRequest := accountdto.AccountRequest{
 		ActiveCard:     true,
@@ -60,7 +63,6 @@ func TestAuthorizationTransaction(t *testing.T){
 	}
 
 	transactionResult := service.CreateTransaction(transactionRequest)
-
 	accountResponseResult, violations := service.AuthorizationTransaction(transactionResult)
 	if accountRespose.ActiveCard != accountResponseResult.ActiveCard {
 		t.Errorf(errorTest, accountRespose.ActiveCard, accountResponseResult.ActiveCard)
@@ -77,6 +79,7 @@ func TestAuthorizationTransaction(t *testing.T){
 
 func TestAuthorizationTransactionAccountNotInitialized(t *testing.T){
 	service := newServiceImpl(accountsvc.Inject())
+	service.accountService.CleanAccounts()
 
 	transactionRequest := transactiondto.TransactionRequest{
 		Merchant: "Samsung",
@@ -85,10 +88,9 @@ func TestAuthorizationTransactionAccountNotInitialized(t *testing.T){
 	}
 
 	transactionResult := service.CreateTransaction(transactionRequest)
-
 	_, violations := service.AuthorizationTransaction(transactionResult)
 
-	if len(violations) != 1 {
+	if len(violations) == 0 {
 		t.Errorf(errorTest, 1, len(violations))
 	}
 
@@ -97,3 +99,39 @@ func TestAuthorizationTransactionAccountNotInitialized(t *testing.T){
 	}
 }
 
+func TestAuthorizationTransactionInsufficientLimit(t *testing.T){
+	service := newServiceImpl(accountsvc.Inject())
+	service.accountService.CleanAccounts()
+
+	accountRequest := accountdto.AccountRequest{
+		ActiveCard:     true,
+		AvailableLimit: 10000,
+	}
+
+	accountResult := service.accountService.CreateAccount(accountRequest)
+	accountRespose := accountdto.NewAccountResponse(accountResult)
+
+	transactionRequest := transactiondto.TransactionRequest{
+		Merchant: "Samsung",
+		Amount:   18000,
+		Time:     "2019-02-13T11:00:00.000Z",
+	}
+
+	transactionResult := service.CreateTransaction(transactionRequest)
+	accountResponseResult, violations := service.AuthorizationTransaction(transactionResult)
+	if accountRespose.ActiveCard != accountResponseResult.ActiveCard {
+		t.Errorf(errorTest, accountRespose.ActiveCard, accountResponseResult.ActiveCard)
+	}
+
+	if accountResponseResult.AvailableLimit != accountRespose.AvailableLimit {
+		t.Errorf(errorTest, accountRespose.AvailableLimit, accountResponseResult.AvailableLimit)
+	}
+
+	if len(violations) == 0 {
+		t.Errorf(errorTest, 0, len(violations))
+	}
+
+	if violations[0] != insufficientLimit {
+		t.Errorf(errorTest, insufficientLimit, violations[0])
+	}
+}

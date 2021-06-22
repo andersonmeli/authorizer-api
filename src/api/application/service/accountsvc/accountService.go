@@ -12,6 +12,7 @@ var (
 type Service interface {
 	CreateAccount(request accountdto.AccountRequest) accountmd.Account
 	GetAccounts() []accountmd.Account
+	CleanAccounts()
 }
 
 func init() {

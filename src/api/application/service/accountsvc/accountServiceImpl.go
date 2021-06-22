@@ -26,3 +26,7 @@ func (service serviceImpl) GetAccounts() []accountmd.Account {
 	return accounts
 }
 
+func (service serviceImpl) CleanAccounts() {
+	accounts = make([]accountmd.Account, 0)
+}
+
