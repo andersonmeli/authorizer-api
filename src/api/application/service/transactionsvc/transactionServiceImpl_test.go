@@ -135,3 +135,40 @@ func TestAuthorizationTransactionInsufficientLimit(t *testing.T){
 		t.Errorf(errorTest, insufficientLimit, violations[0])
 	}
 }
+
+func TestAuthorizationTransactionCardNotActive(t *testing.T){
+	service := newServiceImpl(accountsvc.Inject())
+	service.accountService.CleanAccounts()
+
+	accountRequest := accountdto.AccountRequest{
+		ActiveCard:     false,
+		AvailableLimit: 10000,
+	}
+
+	accountResult := service.accountService.CreateAccount(accountRequest)
+	accountRespose := accountdto.NewAccountResponse(accountResult)
+
+	transactionRequest := transactiondto.TransactionRequest{
+		Merchant: "Samsung",
+		Amount:   8000,
+		Time:     "2019-02-13T11:00:00.000Z",
+	}
+
+	transactionResult := service.CreateTransaction(transactionRequest)
+	accountResponseResult, violations := service.AuthorizationTransaction(transactionResult)
+	if accountRespose.ActiveCard != accountResponseResult.ActiveCard {
+		t.Errorf(errorTest, accountRespose.ActiveCard, accountResponseResult.ActiveCard)
+	}
+
+	if accountResponseResult.AvailableLimit != accountRespose.AvailableLimit {
+		t.Errorf(errorTest, accountRespose.AvailableLimit, accountResponseResult.AvailableLimit)
+	}
+
+	if len(violations) == 0 {
+		t.Errorf(errorTest, 0, len(violations))
+	}
+
+	if violations[0] != cardNotActive {
+		t.Errorf(errorTest, cardNotActive, violations[0])
+	}
+}
