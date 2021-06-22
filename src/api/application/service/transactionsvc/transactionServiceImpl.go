@@ -6,6 +6,7 @@ import (
 	"github.com/authorizer-api/src/api/application/service/accountsvc"
 	"github.com/authorizer-api/src/api/domain/accountmd"
 	"github.com/authorizer-api/src/api/domain/transactionmd"
+	"time"
 )
 
 const (
@@ -69,10 +70,30 @@ func (service serviceImpl) validateTransaction(transaction transactionmd.Transac
 		violations = append(violations, insufficientLimit)
 	}
 
+	//Não deve haver mais que 3 transações de qualquer comerciante em um intervalo de 2 minutos
+	if len(transactions) >= 3 {
+		firstTransaction := transactions[0]
+		firstTransactionTreeMinutes :=  firstTransaction.Time.Add(3 * time.Minute)
+		if transaction.Time.After(firstTransactionTreeMinutes) {
+			violations = append(violations, highFrequencySmallInterval)
+		}
+	}
+
+	//Não deve haver mais que 1 transação similar (mesmo valor e comerciante) no intervalo de 2 minutos
+	if len(transactions) > 0 {
+		for _, transactionFinalized := range transactions {
+			firstTransactionTwoMinutes :=  transactionFinalized.Time.Add(2 * time.Minute)
+			if transactionFinalized.Merchant == transaction.Merchant && transaction.Time.After(firstTransactionTwoMinutes) {
+				violations = append(violations, doubleTransaction)
+			}
+		}
+	}
+
 	if len(violations) == 0 {
 		newAmount := account.AvailableLimit - transaction.Amount
 		accountResponse.AvailableLimit = newAmount
 		account.AvailableLimit = newAmount
+		//Guardando apenas transações que não tiveram violações
 		transactions = append(transactions, transaction)
 	}else{
 		accountResponse.Violations = violations

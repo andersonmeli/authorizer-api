@@ -1,7 +1,9 @@
 package transactionmd
 
+import "time"
+
 type Transaction struct {
 	Merchant string
 	Amount float64
-	Time string
+	Time time.Time
 }
