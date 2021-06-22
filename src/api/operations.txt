@@ -1,7 +1,10 @@
 {"transaction": {"merchant": "Vivara", "amount": 1250, "time": "2019-02-13T11:00:00.000Z"}}
 {"account": {"active-card": true, "available-limit": 1000}}
+{"account": {"active-card": true, "available-limit": 1000}}
 {"transaction": {"merchant": "Vivara", "amount": 1250, "time": "2019-02-13T11:00:00.000Z"}}
 {"transaction": {"merchant": "Samsung", "amount": 2500, "time": "2019-02-13T11:00:01.000Z"}}
 {"transaction": {"merchant": "Nike", "amount": 800, "time": "2019-02-13T11:01:01.000Z"}}
 {"transaction": {"merchant": "Uber", "amount": 80, "time": "2019-02-13T11:01:11.000Z"}}
 {"transaction": {"merchant": "Uber", "amount": 10, "time": "2019-02-13T11:01:13.000Z"}}
+{"transaction": {"merchant": "Mc Donalds", "amount": 10, "time": "2019-02-13T11:01:13.000Z"}}
+{"transaction": {"merchant": "Bobs", "amount": 10, "time": "2019-02-13T11:01:14.000Z"}}
