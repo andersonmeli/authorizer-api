@@ -5,7 +5,7 @@ import (
 )
 
 type OperationResponse struct {
-	Account accountdto.AccountResponse `json:"account"`
+	Account accountdto.AccountResponse `json:"account,omitempty"`
 	Violations []string 			   `json:"violations"`
 }
 
