@@ -31,33 +31,28 @@ func newServiceImpl(accountService accountsvc.Service) serviceImpl {
 	}
 }
 
-func (service serviceImpl) AuthorizationTransaction(transaction transactionmd.Transaction) accountdto.AccountResponse {
+func (service serviceImpl) AuthorizationTransaction(transaction transactionmd.Transaction) (accountdto.AccountResponse, []string) {
 	var accountResponse accountdto.AccountResponse
-	var violations []string
-	violations = append(violations, accountNotInitialized)
-
+	violations := make([]string, 0)
 	//Nenhuma transação deve ser aceita sem que a conta tenha sido inicializada
 	if len(service.accountService.GetAccounts()) == 0 {
-		accountResponse = accountdto.AccountResponse{
-			Violations:     violations,
-		}
+		violations = append(violations, accountNotInitialized)
 	}else{
-		accountResponse = service.validateTransaction(transaction, &service.accountService.GetAccounts()[0])
+		accountResponse, violations = service.validateTransaction(transaction, &service.accountService.GetAccounts()[0])
 	}
 
-	return accountResponse
+	return accountResponse, violations
 }
 
 func (service serviceImpl) CreateTransaction(request transactiondto.TransactionRequest) transactionmd.Transaction {
 	return request.ToModel()
 }
 
-func (service serviceImpl) validateTransaction(transaction transactionmd.Transaction, account *accountmd.Account) accountdto.AccountResponse {
-	var violations []string
+func (service serviceImpl) validateTransaction(transaction transactionmd.Transaction, account *accountmd.Account) (accountdto.AccountResponse, []string) {
+	violations := make([]string, 0)
 	accountResponse := accountdto.AccountResponse{
 		ActiveCard:     account.ActiveCard,
 		AvailableLimit: account.AvailableLimit,
-		Violations:     []string{},
 	}
 
 	//Nenhuma transação deve ser aceita quando o cartão não estiver ativo
@@ -95,9 +90,7 @@ func (service serviceImpl) validateTransaction(transaction transactionmd.Transac
 		account.AvailableLimit = newAmount
 		//Guardando apenas transações que não tiveram violações
 		transactions = append(transactions, transaction)
-	}else{
-		accountResponse.Violations = violations
 	}
 
-	return accountResponse
+	return accountResponse, violations
 }

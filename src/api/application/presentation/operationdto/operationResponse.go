@@ -6,10 +6,12 @@ import (
 
 type OperationResponse struct {
 	Account accountdto.AccountResponse `json:"account"`
+	Violations []string 			   `json:"violations"`
 }
 
-func NewOperationResponse(accountResponse accountdto.AccountResponse) OperationResponse {
+func NewOperationResponse(accountResponse accountdto.AccountResponse, violations []string) OperationResponse {
 	return OperationResponse{
 		Account: accountResponse,
+		Violations: violations,
 	}
 }

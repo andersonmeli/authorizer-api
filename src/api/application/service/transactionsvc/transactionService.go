@@ -13,7 +13,7 @@ var (
 
 type Service interface {
 	CreateTransaction(request transactiondto.TransactionRequest) transactionmd.Transaction
-	AuthorizationTransaction(transaction transactionmd.Transaction) accountdto.AccountResponse
+	AuthorizationTransaction(transaction transactionmd.Transaction) (accountdto.AccountResponse, []string)
 }
 
 func init() {

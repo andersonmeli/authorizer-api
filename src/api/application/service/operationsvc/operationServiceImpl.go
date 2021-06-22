@@ -43,8 +43,8 @@ func authorizationTransaction(operations map[string]map[string]interface{}, serv
 	}
 
 	transaction := service.transactionService.CreateTransaction(transactionRequest)
-	accountResponse := service.transactionService.AuthorizationTransaction(transaction)
-	formatOperationResponse(accountResponse)
+	accountResponse, violations := service.transactionService.AuthorizationTransaction(transaction)
+	formatOperationResponse(accountResponse, violations)
 }
 
 func createAccount(operations map[string]map[string]interface{}, service serviceImpl) {
@@ -55,17 +55,18 @@ func createAccount(operations map[string]map[string]interface{}, service service
 	}
 
 	account := service.accountService.CreateAccount(accountRequest)
+	violations := make([]string, 0)
 	if len(service.accountService.GetAccounts()) > 1 {
 		accountResponse = accountdto.NewAccountResponse(service.accountService.GetAccounts()[0])
-		accountResponse.Violations = append(accountResponse.Violations, accountAlreadyInitialized)
+		violations = append(violations, accountAlreadyInitialized)
 	} else {
 		accountResponse = accountdto.NewAccountResponse(account)
 	}
-	formatOperationResponse(accountResponse)
+	formatOperationResponse(accountResponse, violations)
 }
 
-func formatOperationResponse(accountResponse accountdto.AccountResponse) {
-	buf, err := json.Marshal(operationdto.NewOperationResponse(accountResponse))
+func formatOperationResponse(accountResponse accountdto.AccountResponse, violations []string) {
+	buf, err := json.Marshal(operationdto.NewOperationResponse(accountResponse, violations))
 	if err != nil {
 		log.Fatal(err)
 	}
