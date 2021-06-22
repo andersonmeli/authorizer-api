@@ -7,8 +7,6 @@ import (
 )
 
 func Start() {
-	//message := `{"account": {"active-card": true, "available-limit": 100}}`
-	//var message string
 	var messages []string
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Split(bufio.ScanLines)
