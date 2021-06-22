@@ -13,8 +13,6 @@ import (
 
 const (
 	accountAlreadyInitialized = "account-already-initialized"
-	highFrequencySmallInterval = "high-frequency-small-interval"
-	insufficientLimit = "insufficient-limit"
 )
 
 type serviceImpl struct {
@@ -50,21 +48,19 @@ func authorizationTransaction(operations map[string]map[string]interface{}, serv
 }
 
 func createAccount(operations map[string]map[string]interface{}, service serviceImpl) {
+	var accountResponse accountdto.AccountResponse
 	accountRequest := accountdto.AccountRequest{
 		ActiveCard:     operations["account"]["active-card"].(bool),
 		AvailableLimit: operations["account"]["available-limit"].(float64),
 	}
 
 	account := service.accountService.CreateAccount(accountRequest)
-
-	var accountResponse accountdto.AccountResponse
 	if len(service.accountService.GetAccounts()) > 1 {
 		accountResponse = accountdto.NewAccountResponse(service.accountService.GetAccounts()[0])
 		accountResponse.Violations = append(accountResponse.Violations, accountAlreadyInitialized)
 	} else {
 		accountResponse = accountdto.NewAccountResponse(account)
 	}
-
 	formatOperationResponse(accountResponse)
 }
 

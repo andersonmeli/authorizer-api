@@ -6,9 +6,9 @@ import (
 )
 
 var(
-	account accountmd.Account
 	accounts []accountmd.Account
 )
+
 type serviceImpl struct {
 }
 
@@ -25,3 +25,4 @@ func (service serviceImpl) CreateAccount(request accountdto.AccountRequest) acco
 func (service serviceImpl) GetAccounts() []accountmd.Account {
 	return accounts
 }
+
