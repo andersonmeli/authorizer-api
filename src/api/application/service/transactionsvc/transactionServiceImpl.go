@@ -74,7 +74,7 @@ func (service serviceImpl) validateTransaction(transaction transactionmd.Transac
 	if len(transactions) >= 3 {
 		firstTransaction := transactions[0]
 		firstTransactionTreeMinutes :=  firstTransaction.Time.Add(3 * time.Minute)
-		if transaction.Time.After(firstTransactionTreeMinutes) {
+		if firstTransactionTreeMinutes.After(transaction.Time) {
 			violations = append(violations, highFrequencySmallInterval)
 		}
 	}
@@ -82,8 +82,8 @@ func (service serviceImpl) validateTransaction(transaction transactionmd.Transac
 	//Não deve haver mais que 1 transação similar (mesmo valor e comerciante) no intervalo de 2 minutos
 	if len(transactions) > 0 {
 		for _, transactionFinalized := range transactions {
-			firstTransactionTwoMinutes :=  transactionFinalized.Time.Add(2 * time.Minute)
-			if transactionFinalized.Merchant == transaction.Merchant && transaction.Time.After(firstTransactionTwoMinutes) {
+			transactionTwoMinutes :=  transactionFinalized.Time.Add(2 * time.Minute)
+			if transactionFinalized.Merchant == transaction.Merchant && transactionTwoMinutes.After(transaction.Time) {
 				violations = append(violations, doubleTransaction)
 			}
 		}
