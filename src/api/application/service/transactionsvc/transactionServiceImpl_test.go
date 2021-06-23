@@ -16,6 +16,7 @@ const (
 func TestCreateTransaction(t *testing.T) {
 	service := newServiceImpl(accountsvc.Inject())
 	service.accountService.CleanAccounts()
+	service.CleanTransactions()
 
 	transactionRequest := transactiondto.TransactionRequest{
 		Merchant: "Samsung",
@@ -47,6 +48,7 @@ func TestCreateTransaction(t *testing.T) {
 func TestAuthorizationTransaction(t *testing.T){
 	service := newServiceImpl(accountsvc.Inject())
 	service.accountService.CleanAccounts()
+	service.CleanTransactions()
 
 	accountRequest := accountdto.AccountRequest{
 		ActiveCard:     true,
@@ -80,6 +82,7 @@ func TestAuthorizationTransaction(t *testing.T){
 func TestAuthorizationTransactionAccountNotInitialized(t *testing.T){
 	service := newServiceImpl(accountsvc.Inject())
 	service.accountService.CleanAccounts()
+	service.CleanTransactions()
 
 	transactionRequest := transactiondto.TransactionRequest{
 		Merchant: "Samsung",
@@ -102,6 +105,7 @@ func TestAuthorizationTransactionAccountNotInitialized(t *testing.T){
 func TestAuthorizationTransactionInsufficientLimit(t *testing.T){
 	service := newServiceImpl(accountsvc.Inject())
 	service.accountService.CleanAccounts()
+	service.CleanTransactions()
 
 	accountRequest := accountdto.AccountRequest{
 		ActiveCard:     true,
@@ -139,6 +143,7 @@ func TestAuthorizationTransactionInsufficientLimit(t *testing.T){
 func TestAuthorizationTransactionCardNotActive(t *testing.T){
 	service := newServiceImpl(accountsvc.Inject())
 	service.accountService.CleanAccounts()
+	service.CleanTransactions()
 
 	account := service.accountService.CreateAccount(
 		accountdto.AccountRequest{
@@ -176,6 +181,7 @@ func TestAuthorizationTransactionCardNotActive(t *testing.T){
 func TestAuthorizationTransactionDoubleTransaction(t *testing.T){
 	service := newServiceImpl(accountsvc.Inject())
 	service.accountService.CleanAccounts()
+	service.CleanTransactions()
 
 	account := service.accountService.CreateAccount(
 		accountdto.AccountRequest{

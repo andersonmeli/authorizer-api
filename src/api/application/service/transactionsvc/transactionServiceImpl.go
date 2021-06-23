@@ -94,3 +94,7 @@ func (service serviceImpl) validateTransaction(transaction transactionmd.Transac
 
 	return accountResponse, violations
 }
+
+func (service serviceImpl) CleanTransactions() {
+	transactions = make([]transactionmd.Transaction, 0)
+}
